@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Data Mobil</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <h2 class="text-center mb-4">Data Mobil</h2>
+
+    <!-- Form Tambah / Edit -->
+    <div class="card mb-4">
+      <div class="card-header">
+        {{ if .edit }}Edit Mobil{{ else }}Tambah Mobil Baru{{ end }}
+      </div>
+      <div class="card-body">
+        <form action="{{ if .edit }}/mobil/update{{ else }}/mobil/add{{ end }}" method="POST">
+          {{ if .edit }}<input type="hidden" name="id" value="{{ .data.ID }}">{{ end }}
+
+          <div class="row mb-3">
+            <div class="col">
+              <input name="merk" class="form-control" placeholder="Merk" value="{{ .data.Merk }}" required>
+            </div>
+            <div class="col">
+              <input name="tipe" class="form-control" placeholder="Tipe" value="{{ .data.Tipe }}" required>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col">
+              <input name="nomor" class="form-control" placeholder="Nomor Polisi" value="{{ .data.Nomor }}" required>
+            </div>
+            <div class="col">
+              <select name="status" class="form-select" required>
+                <option value="Tersedia" {{ if eq .data.Status "Tersedia" }}selected{{ end }}>Tersedia</option>
+                <option value="Disewa" {{ if eq .data.Status "Disewa" }}selected{{ end }}>Disewa</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            {{ if .edit }}Simpan Perubahan{{ else }}Tambah Mobil{{ end }}
+          </button>
+          {{ if .edit }}
+            <a href="/mobil" class="btn btn-secondary">Batal</a>
+          {{ end }}
+        </form>
+      </div>
+    </div>
+
+    <!-- Tombol Export -->
+    <div class="mb-3">
+      <a href="/export-pdf" target="_blank" class="btn btn-success">Export PDF</a>
+      <a href="/logout" class="btn btn-danger float-end">Logout</a>
+    </div>
+
+    <!-- Tabel Data Mobil -->
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>No</th>
+            <th>Merk</th>
+            <th>Tipe</th>
+            <th>Nomor</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{ range $index, $m := .mobil }}
+          <tr>
+            <td>{{ add $index 1 }}</td>
+            <td>{{ $m.Merk }}</td>
+            <td>{{ $m.Tipe }}</td>
+            <td>{{ $m.Nomor }}</td>
+            <td>{{ $m.Status }}</td>
+            <td>
+              <a href="/mobil?edit={{ $m.ID }}" class="btn btn-warning btn-sm">Edit</a>
+              <a href="/mobil/delete/{{ $m.ID }}" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>
+            </td>
+          </tr>
+          {{ end }}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
